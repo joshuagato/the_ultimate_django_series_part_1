@@ -94,9 +94,6 @@ DATABASES = {
         'HOST': 'localhost',
         'USER': 'root',
         'PASSWORD': 'Joshua@ITstd&3712',
-        "OPTIONS": {
-            "read_default_file": "/etc/mysql/mysql.cnf",
-        },
     }
 }
 
