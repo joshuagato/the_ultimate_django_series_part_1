@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Collection, Product, Customer
+from .models import Collection, Product, Customer, Order
 
 
 @admin.register(Product)
@@ -26,4 +26,10 @@ class CustomerAdmin(admin.ModelAdmin):
     ordering = ('first_name', 'last_name')
     list_per_page = 10
 
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'placed_at', 'customer']
+
+
+admin.site.register(Order, OrderAdmin)
 admin.site.register(Collection)
