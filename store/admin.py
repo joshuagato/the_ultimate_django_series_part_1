@@ -69,6 +69,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['featured_product']
     list_display = ('title', 'products_count')
     search_fields = ['title']
 
@@ -88,7 +89,7 @@ class CollectionAdmin(admin.ModelAdmin):
         return format_html("<a href='{}'>{}</a>", url, collection.products_count)
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Any]:
-        return super().get_queryset(request).annotate(products_count=Count('product'))
+        return super().get_queryset(request).annotate(products_count=Count('products'))
 
 
 class OrderItemInline(admin.TabularInline):

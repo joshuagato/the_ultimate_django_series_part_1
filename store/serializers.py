@@ -62,3 +62,11 @@ class ProductSerializer(serializers.ModelSerializer):
     #     instance.unit_price = validated_data['unit_price']
     #     instance.save()
     #     return instance
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    products_count = serializers.IntegerField()
+
+    class Meta:
+        model = Collection
+        fields = ['id', 'title', 'products_count']
