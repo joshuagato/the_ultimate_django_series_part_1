@@ -60,11 +60,11 @@ class Customer(models.Model):
         # return f'{self.first_name} {self.last_name}'
         return f'{self.user.first_name} {self.user.last_name}'
 
-    # @admin.display(ordering='user__first_name')  # this looks redundant as ordering works without it
+    @admin.display(ordering='user__first_name')  # This is to enforce sorting with the first name
     def first_name(self):
         return self.user.first_name
 
-    # @admin.display(ordering='user__last_name')  # this looks redundant as ordering works without it
+    @admin.display(ordering='user__last_name')  # This is to enforce sorting with the last name
     def last_name(self):
         return self.user.last_name
 

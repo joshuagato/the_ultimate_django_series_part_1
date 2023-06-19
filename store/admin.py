@@ -60,6 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['user']
     list_display = ('first_name', 'last_name', 'membership')
     list_editable = ('membership',)
     list_per_page = 10
