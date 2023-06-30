@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.http.request import HttpRequest
 from django.urls import reverse
 from django.utils.html import format_html, urlencode
-from .models import Collection, Product, Customer, Order, OrderItem
+from .models import Collection, Product, ProductImage, Customer, Order, OrderItem
 from tags.models import TaggedItem
 
 
@@ -24,11 +24,22 @@ class InventoryFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ProductImageInline(admin.TabularInline):
+    model = ProductImage
+    readonly_fields = ['thumbnail']
+
+    def thumbnail(self, instance):
+        if instance.image.name != '':
+            return format_html(f'<img src="{instance.image.url}" class="thumbnail" />')
+        return ''
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ['title']}
     autocomplete_fields = ['collection']
     actions = ['clear_inventory']
+    inlines = [ProductImageInline]
     list_display = ('title', 'unit_price', 'inventory_status', 'collection_title')
     list_editable = ('unit_price',)
     list_filter = ['collection', 'last_update', InventoryFilter,]
@@ -56,6 +67,11 @@ class ProductAdmin(admin.ModelAdmin):
             # messages.ERROR
             # messages.SUCCESS
         )
+
+    class Media:
+        css = {
+            'all': ['store/styles.css']
+        }
 
 
 @admin.register(Customer)

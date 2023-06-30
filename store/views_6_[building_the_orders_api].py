@@ -19,10 +19,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.request import Request
 from rest_framework import status
-from .models import Product, ProductImage, Collection, OrderItem, Review, Cart, CartItem, Customer, Order
+from .models import Product, Collection, OrderItem, Review, Cart, CartItem, Customer, Order
 from .serializers import (
                             ProductSerializer,
-                            ProductImageSerializer,
                             CollectionSerializer,
                             ReviewSerializer,
                             CartSerializer,
@@ -40,7 +39,7 @@ from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCust
 
 
 class ProductVewSet(ModelViewSet):
-    queryset = Product.objects.prefetch_related('images').all()
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter
@@ -59,16 +58,6 @@ class ProductVewSet(ModelViewSet):
             return Response({'error': 'Product cannot be deleted because it is associated with an order item.'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
         return super().destroy(request, *args, **kwargs)
-
-
-class ProductImageViewSet(ModelViewSet):
-    serializer_class = ProductImageSerializer
-
-    def get_serializer_context(self):
-        return {'product_id': self.kwargs['product_pk']}
-
-    def get_queryset(self):
-        return ProductImage.objects.filter(product_id=self.kwargs['product_pk'])
 
 
 class CollectionViewSet(ModelViewSet):
@@ -139,6 +128,7 @@ class CustomerViewSet(ModelViewSet):
 
 
 class OrderViewSet(ModelViewSet):
+    # permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_permissions(self):
@@ -160,10 +150,18 @@ class OrderViewSet(ModelViewSet):
             return UpdateOrderSerializer
         return OrderSerializer
 
+    # This is no more necessary; It is only useful if we want to rely on the CreateModelMixin that we inherit from this class.
+    # In this case, we're not relying on this mixin; we're implementing the create method from scratch
+
+    # def get_serializer_context(self):
+    #     return {'user_id': self.request.user.id}
+
     def get_queryset(self):
         user = self.request.user
 
         if user.is_staff:
             Order.objects.all()
+        # (customer_id, created) = Customer.objects.only('id').get_or_create(user_id=user.id)
+        # return Order.objects.filter(customer_id=customer_id)
         customer = Customer.objects.only('id').get(user_id=user.id)
         return Order.objects.filter(customer=customer)
