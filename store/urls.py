@@ -7,7 +7,8 @@ from .views import (ProductVewSet,
                     ReviewViewSet,
                     CartViewSet,
                     CartItemViewSet,
-                    CustomerViewSet
+                    CustomerViewSet,
+                    OrderViewSet
                 )
 # from pprint import pprint
 
@@ -18,6 +19,7 @@ router.register('products', ProductVewSet, basename='products')
 router.register('collections', CollectionViewSet)
 router.register('carts', CartViewSet)
 router.register('customers', CustomerViewSet)
+router.register('orders', OrderViewSet, basename='orders')
 
 products_router = routers.NestedDefaultRouter(router, 'products', lookup='product')
 products_router.register('reviews', ReviewViewSet, basename='product-reviews')
