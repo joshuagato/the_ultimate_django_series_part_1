@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -178,4 +179,30 @@ DJOSER = {
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
+}
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #Default, so technically, we don't need to set it
+EMAIL_HOST = 'localhost'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 2525
+DEFAULT_FROM_EMAIL = 'from@joshgato.com'
+
+ADMINS = [
+    ('Josh', 'joshua@joshgato.com'),
+]
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
+CELERY_BEAT_SCHEDULE = {
+    'notify_customers': {
+        'task': 'playground.tasks.notify_customers',
+        'schedule': 5,
+        'args': ['Hello World..']
+        # 'schedule': 15 # Every 15 seconds
+        # 'schedule': 15 * 60 # Every 15 minutes
+        # 'schedule': crontab(day_of_week=1, hour=7, minute=30) # Every Monday at 7:30AM
+        # 'schedule': crontab(minute='*/15') # Every 15 minutes
+    }
 }
